@@ -27,8 +27,8 @@ export function createRecord(tableName, id, question, response){
          TableName: tableName,
          Item: {
              ResponseId: createHash('sha256').update(id).digest('hex'),
-             question: question,
-             response: response
+             Question: question,
+             Response: response
          }
     }
 
@@ -38,4 +38,9 @@ export function createRecord(tableName, id, question, response){
 export function createPutCommand(record){
 
     return new PutCommand(record);
+}
+
+export function getRecentInsertion(record){
+
+    return record.Records[0].dynamodb["NewImage"];
 }

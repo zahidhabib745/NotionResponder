@@ -11,7 +11,7 @@ export const handler = async (event) => {
     question += "?";
 
     //Here I am sending the request to the LLM Model
-    const response = await getLLMResponse(createRequest(question, ));
+    const response = await getLLMResponse(createRequest(question, process.env.API_KEY));
 
     const stsClient = new Client(createRole());
     //After creating the STS client I am using it to create temporary credentials so I can make use of DynamoDB

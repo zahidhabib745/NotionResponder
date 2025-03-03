@@ -6,9 +6,11 @@ export class Client {
 
     async send(command){
 
+        let result;
+
         try{
 
-            let result = await this.client.send(command);
+            result = await this.client.send(command);
         }catch(error){
 
             console.log("Error message: " + error);
