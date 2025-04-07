@@ -1,4 +1,8 @@
-resource "aws_apigateway2_api" "notion_responder" { //Here I am specifying the HTTP API
+resource "aws_api_gateway_account" "api_gateway_account"{
+    cloudwatch_role_arn = aws_iam_role.apigateway_logs_cloudwatch.arn
+}
+
+resource "aws_apigatewayv2_api" "notion_responder" { //Here I am specifying the HTTP API
     name = "NotionResponder"
     protocol_type = "HTTP"
     description = "This api is responsible for sending questions from Notion and receiving answers from DeepSeek."
@@ -7,15 +11,54 @@ resource "aws_apigateway2_api" "notion_responder" { //Here I am specifying the H
     }
 }
 
-resource "aws_apigateway2_route" "single_response_route"{ //Here I am specifying the route where the POST request will be sent so the integration can receive it
-    api_id = aws_apigateway2_api.notion_responder.api_id
-    route_key = "POST /single_response/{proxy+}"
-    target = "integrations/${aws_apigateway2_integration.single_response_integration.id}"
+resource "aws_apigatewayv2_route" "single_response_route"{ //Here I am specifying the route where the POST request will be sent so the integration can receive it
+    api_id = aws_apigatewayv2_api.notion_responder.id
+    route_key = "POST /single_response/{question}"
+    target = "integrations/${aws_apigatewayv2_integration.single_response_integration.id}"
 }
 
-resource "aws_apigateway2_integration" "single_response_integration" {//Here I am specifying the backend to be called
-    api_id = aws_apigateway2_api.single_response.api_id
+resource "aws_apigatewayv2_integration" "single_response_integration" {//Here I am specifying the backend to be called
+    api_id = aws_apigatewayv2_api.notion_responder.id
     integration_type = "AWS_PROXY"
     integration_method = "POST"
     integration_uri = aws_lambda_function.invoke_and_store_deepseek_reponse.invoke_arn
+}
+
+resource "aws_apigatewayv2_stage" "notion_responder_stage"{
+    api_id = aws_apigatewayv2_api.notion_responder.id
+    name = "Dev"
+    deployment_id = aws_apigatewayv2_deployment.notion_responder_deployment.id
+
+    access_log_settings {
+        destination_arn = aws_cloudwatch_log_group.notion_responder_log_group.arn
+        format = jsonencode({
+            requestId = "$context.requestId",
+            requestTime = "$context.requestTime",
+            sourceIp = "$context.identity.sourceIp",
+            httpMethod = "$context.httpMethod",
+            routeKey = "$context.routeKey",
+            status = "$context.status",
+            responseLength = "$context.responseLength",
+            integrationErrorMessage = "$context.integrationErrorMessage"
+            resourcePath = "$context.resourcePath"
+            protocol = "$context.protocol"
+        })
+    }
+}
+
+resource "aws_apigatewayv2_deployment" "notion_responder_deployment"{
+    api_id = aws_apigatewayv2_api.notion_responder.id
+    description = "Deployment for the NotionResponder API"
+
+    triggers = {
+        redeployment = sha1(join(",", [
+            jsonencode(aws_apigatewayv2_route.single_response_route),
+            jsonencode(aws_apigatewayv2_integration.single_response_integration)
+        ]))
+    }
+
+    depends_on = [ 
+        aws_apigatewayv2_route.single_response_route,
+        aws_apigatewayv2_integration.single_response_integration
+     ]
 }
