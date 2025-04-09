@@ -1,3 +1,10 @@
-./terraform/.terraform
-./terraform/tmp/
-./terraform/tmp_layer/
+terraform/.terraform/
+terraform/tmp/
+terraform/tmp_layer/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/invokeDeepSeek.zip
+terraform/lambda_layer.zip
+terraform/node_modules_layer.zip
+terraform/retrieveResponseFromDynamoDB.zip
