@@ -8,7 +8,6 @@ import {
 export function createSES(){
 
     const client = new SESClient();
-    console.log("SES client created");
     return client;
 }
 
@@ -18,11 +17,9 @@ export async function assessVerificationAttributes(client, emailAddress){
 
     if(response.VerificationAttributes && response.VerificationAttributes[emailAddress]){
 
-        console.log("Email address verified");
         return response.VerificationAttributes[emailAddress];
     }
 
-    console.log("Email address not verified"); 
     return false;
 }
 
@@ -30,11 +27,9 @@ export function assessVerificationStatus(verificationAttributes){
 
     if(verificationAttributes.VerificationStatus !== "Success" && verificationAttributes.VerificationStatus !== "Pending"){
 
-        console.log("Verification status not successful or pending");
         return false;
     }
 
-    console.log("Verification status successful or pending");
     return true;
 }
 
@@ -44,12 +39,10 @@ export function assessEmailVerification(senderVerificationAttributes, recipientV
         
         if(assessVerificationStatus(senderVerificationAttributes) && assessVerificationStatus(recipientVerificationAttributes)){
 
-            console.log("Email verification successful, returning true");
             return true;
         }
     }
 
-    console.log("Email verification failed, returning false");
     return false;
 }
 
@@ -58,7 +51,6 @@ export async function verifyEmailAddress(client, emailAddress){
     try{
 
         await client.send(createVerifyEmailIdentityCommand(emailAddress));
-        console.log("Email address verification initiated");    
     }catch(error){
 
         throw new Error("Email address verification failed");
@@ -67,7 +59,6 @@ export async function verifyEmailAddress(client, emailAddress){
 
 export function createGetIdentityVerificationAttributesCommand(emailAddress){
 
-    console.log("Creating get identity verification attributes command");
     return new GetIdentityVerificationAttributesCommand({
         Identities: [emailAddress]
     });
@@ -75,7 +66,6 @@ export function createGetIdentityVerificationAttributesCommand(emailAddress){
 
 export function createVerifyEmailIdentityCommand(emailAddress){
 
-    console.log("Creating verify email identity command");
     return new VerifyEmailIdentityCommand({
         EmailAddress: emailAddress
     });
@@ -100,7 +90,6 @@ export function createEmail(sender, recipient, subject, body){
         }
     }
 
-    console.log("Email created");
     return email;
 }
 
@@ -117,6 +106,5 @@ export async function sendEmail(email, client){
 
 export function createSendEmailCommand(email){
 
-    console.log("Creating send email command");
     return new SendEmailCommand(email);
 }

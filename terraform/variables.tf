@@ -1,4 +1,3 @@
-//Create varaible for API key
 variable "api_key" {
  type = string
  description = "This contains the API key for the lambda function."

@@ -2,7 +2,7 @@ resource "aws_api_gateway_account" "api_gateway_account"{
     cloudwatch_role_arn = aws_iam_role.apigateway_logs_cloudwatch.arn
 }
 
-resource "aws_apigatewayv2_api" "notion_responder" { //Here I am specifying the HTTP API
+resource "aws_apigatewayv2_api" "notion_responder" {
     name = "NotionResponder"
     protocol_type = "HTTP"
     description = "This api is responsible for sending questions from Notion and receiving answers from DeepSeek."
@@ -11,13 +11,13 @@ resource "aws_apigatewayv2_api" "notion_responder" { //Here I am specifying the 
     }
 }
 
-resource "aws_apigatewayv2_route" "single_response_route"{ //Here I am specifying the route where the POST request will be sent so the integration can receive it
+resource "aws_apigatewayv2_route" "single_response_route"{
     api_id = aws_apigatewayv2_api.notion_responder.id
     route_key = "POST /single_response/{question}"
     target = "integrations/${aws_apigatewayv2_integration.single_response_integration.id}"
 }
 
-resource "aws_apigatewayv2_integration" "single_response_integration" {//Here I am specifying the backend to be called
+resource "aws_apigatewayv2_integration" "single_response_integration" {
     api_id = aws_apigatewayv2_api.notion_responder.id
     integration_type = "AWS_PROXY"
     integration_method = "POST"

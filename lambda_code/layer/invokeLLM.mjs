@@ -1,6 +1,5 @@
 export async function getLLMResponse(request){
 
-    console.log("Request: " + JSON.stringify(request)); 
 
     let response;
 
@@ -13,7 +12,6 @@ export async function getLLMResponse(request){
             throw new Error(`Error: ${response.status}`); 
         }
 
-        console.log("Response: " + JSON.stringify(response));
     }catch(error){
 
         console.log("Error message: " + error);
@@ -24,7 +22,6 @@ export async function getLLMResponse(request){
         }
     }
 
-    console.log("Still in getLLMResponse: " + JSON.stringify(response));
     return response.json();
 }
 
@@ -41,8 +38,6 @@ export function createRequest(question, apiKey){
             "messages": [{role: "user", content: question}]
         })
     }
-
-    console.log("Request created");
 
     return request;
 }

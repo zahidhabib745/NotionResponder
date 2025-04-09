@@ -5,13 +5,4 @@ resource "aws_lambda_event_source_mapping" "dynamodb_lambda_trigger"{
 
     batch_size = 1
     maximum_retry_attempts = 3
-    /*
-    filter_criteria {
-      filter {
-        pattern = jsonencode({
-            eventName = ["INSERT"]
-        })
-      }
-    }
-    */
 }

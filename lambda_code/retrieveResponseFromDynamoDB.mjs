@@ -12,11 +12,6 @@ import { Client } from '/opt/nodejs/client.mjs';
 
 export const handler = async (event) => {
 
-    console.log("SES role ARN: " + process.env.ses_role_arn);
-    console.log("Session Name: " + process.env.sessionName);
-    console.log("Sender Email: " + process.env.sender_email_address);
-    console.log("Recipient Email: " + process.env.recipient_email_address);
-   
     const sesClient = new Client(createSES());   
 
     const recentRecord = getRecentInsertion(event);
@@ -29,7 +24,6 @@ export const handler = async (event) => {
         const response = `Here is the response to your question "${recentRecord.Question.S}": \n ${recentRecord.Response.S}`;
 
         const email = createEmail(process.env.sender_email_address, process.env.recipient_email_address, recentRecord.Question.S, response);
-        console.log("Email: " + JSON.stringify(email));
 
         try{
 
@@ -51,13 +45,10 @@ export const handler = async (event) => {
             await verifyEmailAddress(sesClient, process.env.recipient_email_address);
         }catch(error){
 
-            console.log("Error message: " + error);
-
             return {
                 statusCode: 500,
                 body: "Email failed to be sent"
             }
         }
     }
-    console.log("handler executed successfully");
 }       
