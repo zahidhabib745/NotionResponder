@@ -1,7 +1,6 @@
 terraform/.terraform/
 terraform/tmp/
 terraform/tmp_layer/
-terraform/.terraform.lock.hcl
 terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
 terraform/invokeDeepSeek.zip
