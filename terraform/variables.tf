@@ -1,7 +1,7 @@
 variable "api_key" {
  type = string
  description = "This contains the API key for the lambda function."
- default = "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" 
+ default = "sk-or-v1-l98374737590201838441c5d51547719326e446ba0e8b" 
  sensitive = true
 }
 
